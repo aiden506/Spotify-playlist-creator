@@ -42,9 +42,9 @@ class GetPlaylist(SpotifyAPIToken):
     def __init__(self, client_id, client_secret):
         super().__init__(client_id, client_secret)
         self.url = 'https://api.spotify.com/v1/search'
-        self.playlist_name = None
+        self.playlist_name = input('Enter the name of the playlist you wish to search for: ')
         self.data = urlencode({
-        'q': "Don't Wanna Lose You", # playlist name to search for
+        'q': self.playlist_name, # playlist name to search for via user input
         'type': 'playlist', 
         'limit': 50 # number of results to retrieve (50 is upper limit)
         })
@@ -55,13 +55,7 @@ class GetPlaylist(SpotifyAPIToken):
         }
         self.real_url = f"{self.url}?{self.data}"
     
-    # Get Playlist Name
-    def USER_INPUT(self):
-        self.playlist_name = str(input('Enter the name of the playlist you wish to search for: '))
-        return self.playlist_name
-    
     def Get_Playlist(self):
-        self.USER_INPUT()
         get_playlist_response = requests.get(self.real_url, headers=self.headers)
         for x in get_playlist_response.json()['playlists']['items']: # this part is not intuitive
             print('Playlist Name:', x['name'])                       # you have to go through the .json file
