@@ -94,8 +94,9 @@ class GetToken(GetAuthCode):
         
         if self.token_req.status_code in range(200, 299):
             print('Token Request Succesful')
+            return self.token_req
         else:
             print('Token Request Unsuccessful')
 
 Authorize = GetToken(client_id, client_secret)
-Authorize.Request_Token()
+token = Authorize.Request_Token()
