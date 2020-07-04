@@ -100,3 +100,4 @@ class GetToken(GetAuthCode):
 
 Authorize = GetToken(client_id, client_secret)
 token = Authorize.Request_Token()
+# print(token.json())
