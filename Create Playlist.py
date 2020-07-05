@@ -8,8 +8,8 @@ from selenium.webdriver.common.keys import Keys
 import urllib.parse
 import time
 
-client_id = '' # client_id
-client_secret = '' # client_secret 
+client_id = '1906ff01f5ee4766aa640a9fbb4e6207' # client_id
+client_secret = '627fb88c2eac4d288795e96b180603a4' # client_secret 
 
 class GetAuthCode:
     def __init__(self, c_id, c_secret): # passing in cliend_id and client_secret
@@ -55,11 +55,10 @@ class GetAuthCode:
     def Get_Auth_Code(self):
         self.Request_Auth_code()
         self.driver.get(self.auth_response.url)
-        print(self.auth_response.url)
-        time.sleep(5)
+        time.sleep(3)
         self.driver.find_element_by_xpath('/html/body/div[1]/div[2]/div/form/div[1]/div/input').send_keys(self.spot_login_username)
         self.driver.find_element_by_xpath('/html/body/div[1]/div[2]/div/form/div[2]/div/input').send_keys(self.spot_login_pass + Keys.ENTER)
-        time.sleep(5)
+        time.sleep(3)
 
         # Extracting The Auth Code From The Redirect_Uri
         parsed_url = urllib.parse.splitquery(self.driver.current_url) # creates a tuple of all query parameters
@@ -94,24 +93,35 @@ class GetToken(GetAuthCode):
         self.token_req = requests.post(self.token_req_url, params=self.token_req_body ,headers=self.headers)
         
         if self.token_req.status_code in range(200, 299):
-            print('Token Request Succesful')
             return self.token_req.json()['access_token']
         else:
             print('Token Request Unsuccessful')
+            exit(1)
 
-Authorize = GetToken(client_id, client_secret)
-access_token = Authorize.Request_Token()
-print(access_token)
+# Create Playlist
 
-# create playlist
+class CreatePlaylist(GetToken):
+    def __init__(self, c_id, c_secret):
+        super().__init__(c_id, c_secret)
+        self.access_token = self.Request_Token()
+        self.pl_name = input('Enter playlist name: ', '\n')
+        self.pl_url = 'https://api.spotify.com/v1/users/9tyrextkdyvofr67szux6ljyu/playlists' # your user_id
+        self.headers = {
+            'Authorization': f"Bearer {self.access_token}",
+            'Content-Type': 'application/json',
+        }
+        self.json = {
+            'name': self.pl_name
+        }
+        self.pl_response = None
 
-pl_url = 'https://api.spotify.com/v1/users/9tyrextkdyvofr67szux6ljyu/playlists'
-headers = {
-    'Authorization': f"Bearer {access_token}",
-    'Content-Type': 'application/json',
-}
-json = {
-    'name': 'some name'
-}
-pl_response = requests.post(pl_url, headers=headers, json=json)
-print(pl_response.status_code)
+    def SendCreatePlaylistRequest(self):
+
+        self.pl_response = requests.post(self.pl_url, headers=self.headers, json=self.json)
+        if self.pl_response.status_code in range(200, 299):
+            print('Playlist Created Succefully')
+        else:
+            print('Playlist Creation Failed')
+            exit(1)
+CPL = CreatePlaylist(client_id, client_secret)
+CPL.SendCreatePlaylistRequest()
