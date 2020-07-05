@@ -104,7 +104,8 @@ class CreatePlaylist(GetToken):
     def __init__(self, c_id, c_secret):
         super().__init__(c_id, c_secret)
         self.access_token = self.Request_Token()
-        self.pl_name = input('Enter playlist name: ', '\n')
+        self.pl_name = input('Enter playlist name: ')
+        print('\n')
         self.pl_url = 'https://api.spotify.com/v1/users/9tyrextkdyvofr67szux6ljyu/playlists' # your user_id
         self.headers = {
             'Authorization': f"Bearer {self.access_token}",
