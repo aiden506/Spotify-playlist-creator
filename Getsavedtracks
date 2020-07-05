@@ -91,12 +91,14 @@ class GetToken(GetAuthCode):
 st_url = 'https://api.spotify.com/v1/me/tracks'
 st_query = urlencode({
     'limit': 50
-    'offset': 0
-    'market': ES
+    
 })
 st_headers = {
     'Authorization': f"Bearer {access_token}"
 }
 st_real_url = f"{st_url}?{st_query}"
 st_response =  requests.get(st_real_url, headers=st_headers)
-print(st_response.status_code)
+#print(st_response.status_code)
+json_data = st_response.json()
+for track_id in json_data['items']:
+    print(track_id['track']['album']['id'])
