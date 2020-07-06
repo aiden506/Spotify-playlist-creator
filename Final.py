@@ -140,8 +140,13 @@ access_token = CPL.SendCreatePlaylistRequest()
 # Get Saved Tracks
 st_list = []
 st_url = 'https://api.spotify.com/v1/me/tracks'
+offv = 0
+total = int(input('Enter the total number of liked songs that you have:')) 
+while offv < total: #to increase the limit                                                 
+    offv += 50
 st_query = urlencode({
     'limit': 50
+    'offset': offv
 })
 st_headers = {
     'Authorization': f"Bearer {access_token}"
