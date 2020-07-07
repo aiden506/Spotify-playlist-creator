@@ -120,7 +120,6 @@ class CreatePlaylist(GetToken):
 
     def SendCreatePlaylistRequest(self):
         if self.flag == 0:
-            print(self.flag)
             self.pl_response = requests.post(self.pl_url, headers=self.headers, json=self.json)
             self.created_playlist_id = self.pl_response.json()['id']
             # print(self.created_playlist_id)        
@@ -180,6 +179,12 @@ while offv < total:
         'uris': st_list
     }
     gt_response = requests.post(gt_url, headers=gt_headers, json=gt_json)
-    print(gt_response.status_code)
+    final_response_variable = 0
+    if gt_response.status_code in range(200, 299):
+        final_response_variable = 1
     offv += 50
     st_list.clear()
+
+# final message
+if final_response_variable == 1:
+        print('All songs from playlist successfully added to playlist!')
