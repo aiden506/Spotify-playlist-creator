@@ -140,28 +140,46 @@ access_token = CPL.SendCreatePlaylistRequest()
 # Get Saved Tracks
 st_list = []
 st_url = 'https://api.spotify.com/v1/me/tracks'
+offv = 0
+# Getting total
 st_query = urlencode({
-    'limit': 50
-})
+        'limit': 50,
+        'offset': offv
+    })
 st_headers = {
     'Authorization': f"Bearer {access_token}"
 }
 st_real_url = f"{st_url}?{st_query}"
 st_response =  requests.get(st_real_url, headers=st_headers)
-for track_id in st_response.json()['items']:
-    st_list.append(track_id['track']['uri'])
+total = st_response.json()['total']
 
-# Adding Item To Playlist
-gt_url1 = 'https://api.spotify.com/v1/playlists/'
-gt_url2 = '/tracks'
-created_playlist_id = created_playlist_id
-gt_url = f"{gt_url1}{created_playlist_id}{gt_url2}"
-gt_headers = {
-    'Authorization': f"Bearer {access_token}",
-    'Content-Type': 'application/json'
-}
-gt_json = {
-    'uris': st_list
-}
-gt_response = requests.post(gt_url, headers=gt_headers, json=gt_json)
-print(gt_response.status_code)
+# getting saved tracks and adding them till no more saved tracks available
+while offv < total:                                                 
+    st_query = urlencode({
+        'limit': 50,
+        'offset': offv
+    })
+    st_headers = {
+        'Authorization': f"Bearer {access_token}"
+    }
+    st_real_url = f"{st_url}?{st_query}"
+    st_response =  requests.get(st_real_url, headers=st_headers)
+    for track_id in st_response.json()['items']:
+        st_list.append(track_id['track']['uri'])
+
+    # Adding Item To Playlist
+    gt_url1 = 'https://api.spotify.com/v1/playlists/'
+    gt_url2 = '/tracks'
+    created_playlist_id = created_playlist_id
+    gt_url = f"{gt_url1}{created_playlist_id}{gt_url2}"
+    gt_headers = {
+        'Authorization': f"Bearer {access_token}",
+        'Content-Type': 'application/json'
+    }
+    gt_json = {
+        'uris': st_list
+    }
+    gt_response = requests.post(gt_url, headers=gt_headers, json=gt_json)
+    print(gt_response.status_code)
+    offv += 50
+    st_list.clear()
