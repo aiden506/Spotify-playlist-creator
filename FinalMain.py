@@ -112,18 +112,21 @@ class CreatePlaylist(GetToken):
         self.created_playlist_id = None
         self.access_token = self.Request_Token()
         self.pl_name = input('Enter playlist name: ')
+
+        # fetching user id using selenium
         self.user_id_url = 'https://accounts.spotify.com/en/login/?continue=https:%2F%2Fwww.spotify.com%2Fapi%2Fgrowth%2Fl2l-redirect&_locale=en-IN'
         self.driver.get(self.user_id_url)
         time.sleep(3)
         self.driver.execute_script("window.scrollTo(0, 400)")
         time.sleep(2)
         self.user_id = self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div[2]/div[3]/div[2]/div/article[1]/section/table/tbody/tr[1]/td[2]/p')
-        print(self.user_id.text)
+        
+        #joining pl_url by formatting user id into it
         self.pl_url1 = 'https://api.spotify.com/v1/users/'
         self.pl_url2 = '/playlists'
         self.user_id = self.user_id.text
         self.pl_url = f"{self.pl_url1}{self.user_id}{self.pl_url2}"
-        print(self.pl_url)
+        
         self.headers = {
             'Authorization': f"Bearer {self.access_token}",
             'Content-Type': 'application/json',
