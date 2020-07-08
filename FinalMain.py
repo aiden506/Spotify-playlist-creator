@@ -104,11 +104,29 @@ class GetToken(GetAuthCode):
 class CreatePlaylist(GetToken):
     def __init__(self, c_id, c_secret):
         super().__init__(c_id, c_secret)
+        self.pl_url1 = None
+        self.pl_url2 = None
+        self.user_id = None
+        self.user_id_url = None
         self.flag = 0
         self.created_playlist_id = None
         self.access_token = self.Request_Token()
         self.pl_name = input('Enter playlist name: ')
-        self.pl_url = 'https://api.spotify.com/v1/users/9tyrextkdyvofr67szux6ljyu/playlists' # your user_id
+
+        # fetching user id using selenium
+        self.user_id_url = 'https://accounts.spotify.com/en/login/?continue=https:%2F%2Fwww.spotify.com%2Fapi%2Fgrowth%2Fl2l-redirect&_locale=en-IN'
+        self.driver.get(self.user_id_url)
+        time.sleep(3)
+        self.driver.execute_script("window.scrollTo(0, 400)")
+        time.sleep(2)
+        self.user_id = self.driver.find_element_by_xpath('/html/body/div[1]/div/div/div[2]/div[3]/div[2]/div/article[1]/section/table/tbody/tr[1]/td[2]/p')
+        
+        #joining pl_url by formatting user id into it
+        self.pl_url1 = 'https://api.spotify.com/v1/users/'
+        self.pl_url2 = '/playlists'
+        self.user_id = self.user_id.text
+        self.pl_url = f"{self.pl_url1}{self.user_id}{self.pl_url2}"
+        
         self.headers = {
             'Authorization': f"Bearer {self.access_token}",
             'Content-Type': 'application/json',
@@ -187,4 +205,4 @@ while offv < total:
 
 # final message
 if final_response_variable == 1:
-        print('All songs from playlist successfully added to playlist!')
+        print('All songs from liked songs successfully added to playlist!')
